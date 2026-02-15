@@ -1,8 +1,11 @@
 {
     "version": 2,
+    "builds": [
+      { "src": "server/src/app.js", "use": "@vercel/node" },
+      { "src": "client/**", "use": "@vercel/static" }
+    ],
     "rewrites": [
-      { "source": "/api/auth/(.*)", "destination": "/server/src/controllers/authController.js" },
-      { "source": "/api/(.*)", "destination": "/server/src/app.js" },
-      { "source": "/(.*)", "destination": "/client/$1" }
+      { "source": "/api/(.*)", "destination": "server/src/app.js" },
+      { "source": "/(.*)", "destination": "client/$1" }
     ]
   }
