@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Secreto - PCEL</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; text-align: center; }
+        .btn-logout { background: red; color: white; border: none; padding: 10px 20px; cursor: pointer; margin-top: 20px; }
+        .card { border: 1px solid #ccc; padding: 15px; margin: 10px auto; max-width: 300px; border-radius: 8px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); }
+        .precio { color: green; font-weight: bold; font-size: 1.2em; }
+    </style>
+</head>
+<body>
+    <h1>🔓 Bienvenido a la Zona Privada</h1>
+    <p>Solo usuarios logueados pueden ver esto.</p>
+    
+    <div id="lista-productos">
+        <p>Cargando productos exclusivos...</p>
+    </div>
+
+    <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
