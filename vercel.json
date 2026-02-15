@@ -1,6 +1,7 @@
 {
     "version": 2,
     "rewrites": [
+      { "source": "/api/auth/(.*)", "destination": "/server/src/controllers/authController.js" },
       { "source": "/api/(.*)", "destination": "/server/src/app.js" },
       { "source": "/(.*)", "destination": "/client/$1" }
     ]
