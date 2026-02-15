@@ -7,23 +7,29 @@ loginForm.addEventListener('submit', async (e) => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
+    // --- AQUÍ ESTÁ EL CAMBIO ---
+    // Si la página detecta que está en 'localhost', usa la ruta completa con el puerto 3000.
+    // Si NO está en localhost (o sea, está en Vercel), usa la ruta relativa '/api/auth/login'.
+    const URL_DESTINO = window.location.hostname === 'localhost' 
+        ? 'http://localhost:3000/api/auth/login' 
+        : '/api/auth/login';
+
     try {
-        const respuesta = await fetch('http://localhost:3000/api/auth/login', {
+        const respuesta = await fetch(URL_DESTINO, { // <--- Usamos la variable aquí
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ email, password })
         });
+    // ---------------------------
 
         const data = await respuesta.json();
 
         if (respuesta.ok) {
             mensajeDiv.textContent = "¡Login correcto! Redirigiendo...";
             mensajeDiv.className = "mensaje success";
-            // Guardamos el token para usarlo después
             localStorage.setItem('token', data.token);
-            console.log("Token guardado:", data.token);
         } else {
             mensajeDiv.textContent = data.mensaje || "Error al iniciar sesión";
             mensajeDiv.className = "mensaje error";
