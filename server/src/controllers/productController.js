@@ -2,16 +2,25 @@ const Product = require('../models/product');
 
 exports.crearProducto = async (req, res) => {
     try {
+        // Creamos el producto con nombre, categoria y precio que vienen del form
         const nuevoProducto = new Product(req.body);
-        // Asignamos el ID del usuario si tu middleware de auth lo provee
+
+        // SOLO asignamos el usuario si realmente existe en la petición
+        // Esto evita que MongoDB de error si req.usuario es undefined
         if (req.usuario) {
             nuevoProducto.usuario = req.usuario;
         }
+
+        // Guardamos en la base de datos
         await nuevoProducto.save();
+
         res.status(201).json(nuevoProducto);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ mensaje: "Hubo un error al crear el componente" });
+        console.error("Error en MongoDB:", error);
+        res.status(500).json({ 
+            mensaje: "Hubo un error al crear el componente",
+            error: error.message 
+        });
     }
 };
 
