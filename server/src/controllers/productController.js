@@ -33,29 +33,32 @@ exports.obtenerProductos = async (req, res) => {
     }
 };
 
+// Actualizar un producto (Precio o cualquier campo)
 exports.actualizarProducto = async (req, res) => {
     try {
-        const { nombre, marca, categoria, precio, stock, descripcion } = req.body;
-        let producto = await Product.findById(req.params.id);
-        if (!producto) return res.status(404).json({ mensaje: 'Producto no encontrado' });
-        
-        producto.nombre = nombre || producto.nombre;
-        producto.precio = precio || producto.precio;
+        const { id } = req.params;
+        // Usamos $set para actualizar solo los campos que vengan en el body
+        const productoActualizado = await Product.findByIdAndUpdate(
+            id, 
+            { $set: req.body }, 
+            { new: true }
+        );
 
-        producto = await Product.findByIdAndUpdate(req.params.id, { $set: producto }, { new: true });
-        res.json(producto);
+        if (!productoActualizado) return res.status(404).json({ mensaje: 'Producto no encontrado' });
+        res.json(productoActualizado);
     } catch (error) {
-        res.status(500).send('Error al actualizar');
+        res.status(500).json({ mensaje: 'Error al actualizar el precio' });
     }
 };
 
+// Eliminar un producto
 exports.eliminarProducto = async (req, res) => {
     try {
-        let producto = await Product.findById(req.params.id);
+        const { id } = req.params;
+        const producto = await Product.findByIdAndDelete(id);
         if (!producto) return res.status(404).json({ mensaje: 'Producto no encontrado' });
-        await Product.findByIdAndDelete(req.params.id);
         res.json({ mensaje: 'Producto eliminado correctamente' });
     } catch (error) {
-        res.status(500).send('Error al eliminar');
+        res.status(500).json({ mensaje: 'Error al eliminar' });
     }
 };

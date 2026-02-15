@@ -1,114 +1,120 @@
 const lista = document.getElementById('lista-productos');
-const formProducto = document.getElementById('form-producto');
 const mensajeForm = document.getElementById('mensaje-form');
-
-// 1. Verificación de Seguridad: ¿Hay token?
 const token = localStorage.getItem('token');
-if (!token) {
-    window.location.href = 'index.html';
-}
 
-// 2. Función para Cerrar Sesión
+if (!token) window.location.href = 'index.html';
+
 function logout() {
     localStorage.removeItem('token');
     window.location.href = 'index.html';
 }
 
-// 3. Cargar productos (GET)
+// 1. CARGAR PRODUCTOS CON DISEÑO DE TARJETAS
 async function cargarProductos() {
     try {
-        const respuesta = await fetch('/api/productos', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
+        const res = await fetch('/api/productos', {
+            headers: { 'Authorization': `Bearer ${token}` }
         });
-
-        if (!respuesta.ok) {
-            if (respuesta.status === 401 || respuesta.status === 403) {
-                logout(); 
-            }
-            throw new Error('Error al obtener los datos del servidor');
-        }
-
-        const productos = await respuesta.json();
+        const productos = await res.json();
         lista.innerHTML = '';
-        
-        if (productos.length === 0) {
-            lista.innerHTML = '<p>No hay productos registrados en la base de datos.</p>';
-            return;
-        }
 
         productos.forEach(prod => {
             const div = document.createElement('div');
             div.className = 'card';
+            // Imagen aleatoria de tecnología para cada producto
+            const imgUrl = `https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=300&q=80&sig=${prod._id}`;
+            
             div.innerHTML = `
+                <img src="${imgUrl}" alt="tech">
                 <h3>${prod.nombre}</h3>
-                <p><strong>Categoría:</strong> ${prod.categoria || 'Sin categoría'}</p>
+                <p>Categoría: ${prod.categoria}</p>
                 <p class="precio">$${prod.precio}</p>
+                <div class="actions">
+                    <button class="btn-edit" onclick="editarPrecio('${prod._id}', ${prod.precio})">
+                        <i class="fas fa-edit"></i> Precio
+                    </button>
+                    <button class="btn-del" onclick="eliminarProducto('${prod._id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
             `;
             lista.appendChild(div);
         });
-
     } catch (error) {
-        console.error("Error cargando productos:", error);
-        lista.innerHTML = '<p style="color:red">Error de conexión al cargar la lista.</p>';
+        console.error(error);
     }
 }
 
-// 4. Agregar producto (POST)
-if (formProducto) {
-    formProducto.addEventListener('submit', async (e) => {
-        e.preventDefault(); 
+// 2. CREAR PRODUCTO (Actualizado para el nuevo diseño)
+async function crearProducto() {
+    const nombre = document.getElementById('nombre').value;
+    const categoria = document.getElementById('categoria').value;
+    const precio = document.getElementById('precio').value;
 
-        mensajeForm.textContent = "Guardando...";
-        mensajeForm.style.color = "blue";
+    if(!nombre || !precio) return alert("Llena los campos básicos");
 
-        const nombre = document.getElementById('nombre').value;
-        const categoria = document.getElementById('categoria').value;
-        const precio = document.getElementById('precio').value;
+    try {
+        const res = await fetch('/api/productos', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ 
+                nombre, 
+                categoria, 
+                precio: Number(precio),
+                marca: "PCEL Brand", 
+                stock: 10 
+            })
+        });
 
-        // CORRECCIÓN: Enviamos marca y stock porque son requeridos en tu modelo de MongoDB
-        const nuevoProducto = {
-            nombre: nombre,
-            categoria: categoria,
-            precio: Number(precio),
-            marca: "Genérica", // Valor por defecto para cumplir con el modelo
-            stock: 1,           // Valor por defecto para cumplir con el modelo
-            descripcion: "Añadido desde el dashboard"
-        };
+        if (res.ok) {
+            document.getElementById('nombre').value = '';
+            document.getElementById('precio').value = '';
+            cargarProductos();
+        }
+    } catch (error) {
+        alert("Error al guardar");
+    }
+}
 
+// 3. EDITAR PRECIO (PUT)
+async function editarPrecio(id, precioActual) {
+    const nuevoPrecio = prompt("Introduce el nuevo precio:", precioActual);
+    
+    if (nuevoPrecio && !isNaN(nuevoPrecio)) {
         try {
-            const respuesta = await fetch('/api/productos', {
-                method: 'POST',
-                headers: {
+            const res = await fetch(`/api/productos/${id}`, {
+                method: 'PUT',
+                headers: { 
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(nuevoProducto)
+                body: JSON.stringify({ precio: Number(nuevoPrecio) })
             });
 
-            const data = await respuesta.json();
-
-            if (respuesta.ok) {
-                mensajeForm.style.color = 'green';
-                mensajeForm.textContent = '¡Producto agregado correctamente! ✅';
-                formProducto.reset(); 
-                await cargarProductos(); 
-                
-                setTimeout(() => { mensajeForm.textContent = ""; }, 3000);
-            } else {
-                mensajeForm.style.color = 'red';
-                // Mostramos el error específico que mande MongoDB si algo falla
-                mensajeForm.textContent = data.error || data.mensaje || 'Error al guardar';
-            }
+            if (res.ok) cargarProductos();
         } catch (error) {
-            console.error("Error en la petición POST:", error);
-            mensajeForm.style.color = 'red';
-            mensajeForm.textContent = 'Error de conexión con el servidor';
+            alert("No se pudo actualizar");
         }
-    });
+    }
+}
+
+// 4. ELIMINAR PRODUCTO (DELETE)
+async function eliminarProducto(id) {
+    if (confirm("¿Estás seguro de eliminar este producto?")) {
+        try {
+            const res = await fetch(`/api/productos/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (res.ok) cargarProductos();
+        } catch (error) {
+            alert("Error al eliminar");
+        }
+    }
 }
 
 cargarProductos();
