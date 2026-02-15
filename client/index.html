@@ -3,32 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PCEL - Bienvenido</title>
+    <title>PCEL | Tecnología a tu alcance</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #003366; --accent: #00a8e8; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--primary); color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .hero { text-align: center; background: white; color: #333; padding: 3rem; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); max-width: 450px; width: 90%; }
-        .logo-icon { font-size: 4rem; color: var(--primary); margin-bottom: 1rem; }
-        h1 { margin: 0; color: var(--primary); font-size: 2.5rem; }
-        p { color: #666; margin-bottom: 2rem; }
-        .btn-group { display: flex; flex-direction: column; gap: 15px; }
-        .btn { padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; text-decoration: none; font-size: 1.1rem; transition: 0.3s; text-align: center; border: none; }
-        .btn-login { background: var(--primary); color: white; }
-        .btn-register { background: white; color: var(--primary); border: 2px solid var(--primary); }
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        :root { --pcel-blue: #003366; --pcel-cyan: #00a8e8; --light: #f8f9fa; --dark: #333; }
+        
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background-color: var(--light); color: var(--dark); }
+
+        /* Navbar Responsiva */
+        nav { background: white; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: bold; color: var(--pcel-blue); display: flex; align-items: center; gap: 10px; }
+        .nav-links { display: flex; gap: 20px; align-items: center; }
+        .btn-admin { background: var(--pcel-blue); color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .btn-admin:hover { background: var(--pcel-cyan); }
+
+        /* Hero Section */
+        .hero { background: linear-gradient(rgba(0,51,102,0.8), rgba(0,51,102,0.8)), url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80'); 
+                height: 400px; background-size: cover; background-position: center; display: flex; flex-direction: column; 
+                justify-content: center; align-items: center; color: white; text-align: center; padding: 0 20px; }
+        .hero h1 { font-size: 3rem; margin: 0; }
+        .hero p { font-size: 1.2rem; margin: 15px 0; }
+
+        /* Grid de Productos Destacados */
+        .container { padding: 40px 5%; }
+        .section-title { border-left: 5px solid var(--pcel-blue); padding-left: 15px; margin-bottom: 30px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
+        .prod-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 15px rgba(0,0,0,0.05); transition: 0.3s; text-align: center; padding-bottom: 20px; }
+        .prod-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .prod-card img { width: 100%; height: 200px; object-fit: cover; }
+        .prod-card h3 { font-size: 1.1rem; margin: 15px 10px; }
+        .price { color: var(--pcel-blue); font-size: 1.3rem; font-weight: bold; }
+
+        /* Media Queries para Celulares */
+        @media (max-width: 768px) {
+            .nav-links { font-size: 0.9rem; }
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1rem; }
+        }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <div class="logo-icon"><i class="fas fa-microchip"></i></div>
-        <h1>PCEL Store</h1>
-        <p>Tu inventario tecnológico administrado en la nube de forma segura.</p>
-        
-        <div class="btn-group">
-            <a href="login.html" class="btn btn-login">Iniciar Sesión</a>
-            <a href="registro.html" class="btn btn-register">Crear Cuenta Nueva</a>
+
+    <nav>
+        <div class="logo"><i class="fas fa-microchip"></i> PCEL</div>
+        <div class="nav-links">
+            <a href="login.html" class="btn-admin"><i class="fas fa-user-shield"></i> Administración</a>
         </div>
+    </nav>
+
+    <header class="hero">
+        <h1>Lo mejor en Tecnología</h1>
+        <p>Encuentra hardware, laptops y periféricos al mejor precio.</p>
+    </header>
+
+    <main class="container">
+        <div class="section-title">
+            <h2>Productos Destacados</h2>
+        </div>
+        
+        <div class="product-grid">
+            <div class="prod-card">
+                <img src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=400&q=80" alt="Laptop">
+                <h3>Laptop Ultra Pro 15"</h3>
+                <p class="price">$24,999</p>
+            </div>
+            <div class="prod-card">
+                <img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=400&q=80" alt="Monitor">
+                <h3>Monitor Gamer 27" 144Hz</h3>
+                <p class="price">$6,450</p>
+            </div>
+            <div class="prod-card">
+                <img src="https://images.unsplash.com/photo-1541140532154-b024d715b909?auto=format&fit=crop&w=400&q=80" alt="Teclado">
+                <h3>Teclado Mecánico RGB</h3>
+                <p class="price">$1,200</p>
+            </div>
+            <div class="prod-card">
+                <img src="https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=400&q=80" alt="Mouse">
+                <h3>Mouse Ergonómico Wireless</h3>
+                <p class="price">$850</p>
+            </div>
+        </div>
+    </main>
+
+    <footer style="background: #333; color: white; text-align: center; padding: 20px; margin-top: 50px;">
+        <p>&copy; 2026 Tarea de Roberto Naredo - Tecmilenio</p>
     </div>
+
 </body>
 </html>
