@@ -29,8 +29,8 @@ const ProductSchema = new mongoose.Schema({
     },
     usuario: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Esto conecta el producto con un usuario real
-        required: true
+        ref: 'User', 
+        required: false // <--- CAMBIO AQUÍ: De true a false para evitar el error 500
     }
 }, {
     timestamps: true

@@ -27,7 +27,7 @@ async function cargarProductos() {
 
         if (!respuesta.ok) {
             if (respuesta.status === 401 || respuesta.status === 403) {
-                logout(); // Si el token expiró, sacamos al usuario
+                logout(); 
             }
             throw new Error('Error al obtener los datos del servidor');
         }
@@ -60,22 +60,23 @@ async function cargarProductos() {
 // 4. Agregar producto (POST)
 if (formProducto) {
     formProducto.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Detiene el refresco de pantalla
+        e.preventDefault(); 
 
-        // Limpiar mensajes previos
-        mensajeForm.textContent = "Enviando datos al servidor...";
+        mensajeForm.textContent = "Guardando...";
         mensajeForm.style.color = "blue";
 
-        // Captura de valores del formulario
         const nombre = document.getElementById('nombre').value;
         const categoria = document.getElementById('categoria').value;
         const precio = document.getElementById('precio').value;
 
-        // Construimos el objeto respetando lo que tu ProductController espera (req.body)
+        // CORRECCIÓN: Enviamos marca y stock porque son requeridos en tu modelo de MongoDB
         const nuevoProducto = {
             nombre: nombre,
             categoria: categoria,
-            precio: Number(precio) // Aseguramos que el precio viaje como número
+            precio: Number(precio),
+            marca: "Genérica", // Valor por defecto para cumplir con el modelo
+            stock: 1,           // Valor por defecto para cumplir con el modelo
+            descripcion: "Añadido desde el dashboard"
         };
 
         try {
@@ -91,31 +92,23 @@ if (formProducto) {
             const data = await respuesta.json();
 
             if (respuesta.ok) {
-                // ÉXITO
                 mensajeForm.style.color = 'green';
-                mensajeForm.textContent = '¡Producto guardado exitosamente en MongoDB! ✅';
-                
-                formProducto.reset(); // Limpia el formulario
-                
-                // Recargamos la lista para ver el nuevo producto sin refrescar la página
+                mensajeForm.textContent = '¡Producto agregado correctamente! ✅';
+                formProducto.reset(); 
                 await cargarProductos(); 
                 
-                // Borrar el mensaje de éxito después de 3 segundos
                 setTimeout(() => { mensajeForm.textContent = ""; }, 3000);
-
             } else {
-                // ERROR DEL SERVIDOR (ej. validación fallida)
                 mensajeForm.style.color = 'red';
-                mensajeForm.textContent = data.mensaje || 'No se pudo guardar el producto.';
+                // Mostramos el error específico que mande MongoDB si algo falla
+                mensajeForm.textContent = data.error || data.mensaje || 'Error al guardar';
             }
         } catch (error) {
-            // ERROR DE RED
             console.error("Error en la petición POST:", error);
             mensajeForm.style.color = 'red';
-            mensajeForm.textContent = 'Error de red: El servidor no responde.';
+            mensajeForm.textContent = 'Error de conexión con el servidor';
         }
     });
 }
 
-// Ejecutar la carga inicial al entrar
 cargarProductos();
