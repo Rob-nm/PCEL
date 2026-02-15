@@ -1,35 +1,57 @@
 const request = require('supertest');
-const express = require('express');
+const mongoose = require('mongoose');
+const app = require('../src/app'); 
+const User = require('../src/models/user'); 
 
-// Creamos una mini-app de prueba para no cargar el archivo app.js real
-const app = express();
-app.use(express.json());
+describe('Pruebas de Autenticación (Auth)', () => {
+    
+    // Limpiar el usuario de prueba antes de empezar para que no diga "usuario ya existe"
+    beforeAll(async () => {
+        await User.deleteMany({ email: 'test@pcel.com' });
+    });
 
-// Simulamos una respuesta rápida para que no intente ir a la base de datos real
-// Esto cumple con la rúbrica de probar que las rutas existen y responden.
-app.post('/api/auth/register', (req, res) => res.status(201).json({ mensaje: "Test registro" }));
-app.post('/api/auth/login', (req, res) => res.status(200).json({ mensaje: "Test login" }));
+    afterAll(async () => {
+        await User.deleteMany({ email: 'test@pcel.com' });
+        await mongoose.connection.close();
+    });
 
-describe('Pruebas Unitarias de Rutas de Autenticación', () => {
-
-    it('Debería responder 201 al registrar un usuario (Mock de Ruta)', async () => {
+    // 1. Test de Registro
+    it('Debe registrar un nuevo usuario exitosamente', async () => {
         const res = await request(app)
             .post('/api/auth/register')
             .send({
-                nombre: "Test User",
-                email: "test@pcel.com",
-                password: "123"
+                nombre: 'Usuario de Prueba',
+                email: 'test@pcel.com',
+                password: 'password123'
             });
+        
         expect(res.statusCode).toEqual(201);
+        // Ajustado a "creado" que es lo que responde tu servidor real
+        expect(res.body).toHaveProperty('mensaje', 'Usuario creado exitosamente');
     });
 
-    it('Debería responder 200 al hacer login (Mock de Ruta)', async () => {
+    // 2. Test de Login
+    it('Debe iniciar sesión y devolver un Token JWT', async () => {
         const res = await request(app)
             .post('/api/auth/login')
             .send({
-                email: "test@pcel.com",
-                password: "123"
+                email: 'test@pcel.com',
+                password: 'password123'
             });
+        
         expect(res.statusCode).toEqual(200);
+        expect(res.body).toHaveProperty('token'); 
+    });
+
+    // 3. Test de Error (Contraseña incorrecta)
+    it('No debe permitir login con contraseña errónea', async () => {
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send({
+                email: 'test@pcel.com',
+                password: 'password_falso'
+            });
+        
+        expect(res.statusCode).toBeGreaterThanOrEqual(400);
     });
 });
