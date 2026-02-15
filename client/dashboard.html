@@ -15,6 +15,21 @@
     <h1>🔓 Bienvenido a la Zona Privada</h1>
     <p>Solo usuarios logueados pueden ver esto.</p>
     
+    <div class="card" style="max-width: 500px; background: #f9f9f9;">
+        <h3>➕ Agregar Nuevo Producto</h3>
+        <form id="form-producto">
+            <input type="text" id="nombre" placeholder="Nombre del producto" required style="width: 90%; padding: 8px; margin: 5px;">
+            <input type="text" id="categoria" placeholder="Categoría (ej. Laptops)" required style="width: 90%; padding: 8px; margin: 5px;">
+            <input type="number" id="precio" placeholder="Precio" required style="width: 90%; padding: 8px; margin: 5px;">
+            <button type="submit" style="background: blue; color: white; border: none; padding: 10px; width: 100%; cursor: pointer;">Guardar Producto</button>
+        </form>
+        <p id="mensaje-form"></p>
+    </div>
+
+    <hr>
+
+   
+
     <div id="lista-productos">
         <p>Cargando productos exclusivos...</p>
     </div>
