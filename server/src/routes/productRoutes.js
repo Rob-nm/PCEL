@@ -1,17 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
-const auth = require('../middlewares/authMiddleware'); // Nuestro portero
 
-// Ruta para crear producto: POST /api/productos
-// El middleware 'auth' protege esta ruta
-router.post('/', auth, productController.crearProducto);
-// Obtener productos (Pública o privada, según prefieras. Aquí la pondremos pública para ver el catálogo)
+// Ruta para OBTENER productos (GET)
 router.get('/', productController.obtenerProductos);
 
-// Actualizar producto (Privada - requiere token)
-router.put('/:id', auth, productController.actualizarProducto);
+// Ruta para CREAR producto (POST)
+// Usamos el nombre exacto de tu función: crearProducto
+router.post('/', productController.crearProducto);
 
-// Eliminar producto (Privada - requiere token)
-router.delete('/:id', auth, productController.eliminarProducto);
+// Rutas para actualizar y eliminar
+router.put('/:id', productController.actualizarProducto);
+router.delete('/:id', productController.eliminarProducto);
+
 module.exports = router;
