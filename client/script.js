@@ -8,9 +8,10 @@ loginForm.addEventListener('submit', async (e) => {
     const password = document.getElementById('password').value;
 
     try {
-        // --- CAMBIO DEFINITIVO ---
-        // Usamos solo la barra '/' al inicio. 
-        // El navegador completará automáticamente con el dominio donde estés (localhost o Vercel).
+        // --- CAMBIO OBLIGATORIO ---
+        // Usamos SOLO la ruta relativa.
+        // Esto obliga al navegador a buscar en "el mismo sitio donde estoy".
+        // Si estás en Vercel, buscará en Vercel. Si estás en local, en local.
         const respuesta = await fetch('/api/auth/login', { 
             method: 'POST',
             headers: {
@@ -24,19 +25,15 @@ loginForm.addEventListener('submit', async (e) => {
         if (respuesta.ok) {
             mensajeDiv.textContent = "¡Login correcto! Redirigiendo...";
             mensajeDiv.className = "mensaje success";
-            
-            // Guardamos el token para usarlo después
             localStorage.setItem('token', data.token);
-            
-            // (Opcional) Aquí podrías redirigir a otra página
-            // window.location.href = '/dashboard.html'; 
+            // Opcional: window.location.href = '/dashboard.html';
         } else {
             mensajeDiv.textContent = data.mensaje || "Error al iniciar sesión";
             mensajeDiv.className = "mensaje error";
         }
     } catch (error) {
-        console.error("Error en el fetch:", error);
-        mensajeDiv.textContent = "No se pudo conectar con el servidor";
+        console.error(error);
+        mensajeDiv.textContent = "Error de conexión: " + error.message;
         mensajeDiv.className = "mensaje error";
     }
 });
