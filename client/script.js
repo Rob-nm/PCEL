@@ -15,7 +15,7 @@ loginForm.addEventListener('submit', async (e) => {
         : '/api/auth/login';
 
     try {
-        const respuesta = await fetch(URL_DESTINO, { // <--- Usamos la variable aquí
+        const respuesta = await fetch('https://pcel-replica.vercel.app/api/auth/login', { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
